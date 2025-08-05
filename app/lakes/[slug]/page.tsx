@@ -31,6 +31,7 @@ import ShareButtons from '@/components/lakes/ShareButtons';
 import LakeMap from '@/components/LakeMap';
 import WaterQualityTab from '@/components/lakes/WaterQualityTab';
 import TemporalDataTab from '@/components/lakes/TemporalDataTab';
+import { API_CONFIG } from '@/lib/config';
 
 export async function generateStaticParams() {
   return lakeDatabase.map((lake) => ({
@@ -54,7 +55,7 @@ export default async function LakeDetailPage({ params }: PageProps) {
 
   const lossPercentage = calculateLossPercentage(lake);
   const qualityInfo = getWaterQualityInfo(lake.waterQuality);
-  const shareUrl = `https://juniorhat78.github.io/hyderabad-lakes/lakes/${lake.id}`;
+  const shareUrl = `${API_CONFIG.siteUrl}/lakes/${lake.id}`;
   const shareText = `Check out ${lake.name} in Hyderabad - ${lake.description?.substring(0, 100)}...`;
 
   return (

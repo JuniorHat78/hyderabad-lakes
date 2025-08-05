@@ -1,12 +1,21 @@
-// API Configuration
+// API Configuration for Vercel Deployment
 export const API_CONFIG = {
-  // Hardcoded API URL for GitHub Pages deployment
-  baseUrl: typeof window !== 'undefined' && window.location.hostname === 'localhost' 
-    ? 'http://localhost:3001' 
-    : 'https://juniorhat78.github.io/hyderabad-lakes-api',
+  // API URL with environment variable support
+  baseUrl: process.env.NEXT_PUBLIC_API_URL || (
+    typeof window !== 'undefined' && window.location.hostname === 'localhost' 
+      ? 'http://localhost:3001' 
+      : 'https://hyderabad-lakes-api.vercel.app'  // Update this with your actual API URL
+  ),
   
-  // For static hosting on GitHub Pages, we can serve data directly
-  useStaticData: typeof window !== 'undefined' && window.location.hostname.includes('github.io'),
+  // Site URL for sharing
+  siteUrl: process.env.NEXT_PUBLIC_SITE_URL || (
+    typeof window !== 'undefined' && window.location.hostname === 'localhost'
+      ? 'http://localhost:3000'
+      : 'https://hyderabad-lakes.vercel.app'  // Update this with your actual site URL
+  ),
+  
+  // For Vercel deployment with API
+  useStaticData: false,
 };
 
 // Helper function to get data URL
