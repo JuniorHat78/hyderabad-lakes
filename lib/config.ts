@@ -24,23 +24,45 @@ export const API_CONFIG = {
 
 // Helper function to get data URL with CDN support
 export function getDataUrl(path: string): string {
-  const isLocalhost = typeof window !== 'undefined' && window.location.hostname === 'localhost';
+  // Debug logging
+  const isServer = typeof window === 'undefined';
+  const hostname = !isServer ? window.location.hostname : 'server-side';
   
-  // Use local files only in localhost development
-  if (isLocalhost) {
+  console.log('[getDataUrl] Environment:', {
+    path,
+    isServer,
+    hostname,
+    NODE_ENV: process.env.NODE_ENV,
+    useCdn: API_CONFIG.useCdn,
+  });
+  
+  // For server-side rendering or production, ALWAYS use CDN for data files
+  // Only use local files when explicitly on localhost in the browser
+  const shouldUseLocal = !isServer && hostname === 'localhost';
+  
+  console.log('[getDataUrl] shouldUseLocal:', shouldUseLocal);
+  
+  // Use local files only when running on localhost in browser
+  if (shouldUseLocal) {
     const cleanPath = path.startsWith('/') ? path.slice(1) : path;
-    return `/${cleanPath}`;
+    const localUrl = `/${cleanPath}`;
+    console.log('[getDataUrl] Returning LOCAL path:', localUrl);
+    return localUrl;
   }
   
-  // Use CDN for all data files in production (non-localhost)
+  // Use CDN for all data files in production and SSR
   if (API_CONFIG.useCdn && path.includes('/data/')) {
     // Extract path after /data/ to maintain directory structure
     const dataPath = path.split('/data/')[1] || path.split('data/')[1];
     const cdnBase = `https://cdn.jsdelivr.net/gh/${API_CONFIG.cdnGithubUsername}/${API_CONFIG.cdnGithubRepo}@${API_CONFIG.cdnBranch}`;
-    return `${cdnBase}/data/${dataPath}`;
+    const cdnUrl = `${cdnBase}/data/${dataPath}`;
+    console.log('[getDataUrl] Returning CDN path:', cdnUrl);
+    return cdnUrl;
   }
   
   // Fallback for non-data files (images, etc.)
   const cleanPath = path.startsWith('/') ? path.slice(1) : path;
-  return `/${cleanPath}`;
+  const fallbackUrl = `/${cleanPath}`;
+  console.log('[getDataUrl] Returning FALLBACK path:', fallbackUrl);
+  return fallbackUrl;
 }

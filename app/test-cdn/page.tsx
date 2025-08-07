@@ -1,17 +1,27 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { getDataUrl } from '@/lib/config'
+import { getDataUrl, API_CONFIG } from '@/lib/config'
 
 export default function TestCDN() {
   const [cdnUrl, setCdnUrl] = useState('')
   const [dataStatus, setDataStatus] = useState('Checking...')
-  const [isProduction, setIsProduction] = useState(false)
+  const [debugInfo, setDebugInfo] = useState<any>({})
 
   useEffect(() => {
-    // Check if we're in production
-    const isProd = window.location.hostname !== 'localhost'
-    setIsProduction(isProd)
+    // Collect debug info
+    const debug = {
+      hostname: window.location.hostname,
+      isLocalhost: window.location.hostname === 'localhost',
+      windowDefined: typeof window !== 'undefined',
+      useCdn: API_CONFIG.useCdn,
+      cdnUsername: API_CONFIG.cdnGithubUsername,
+      cdnRepo: API_CONFIG.cdnGithubRepo,
+      cdnBranch: API_CONFIG.cdnBranch,
+    }
+    setDebugInfo(debug)
+    
+    console.log('Test page debug info:', debug)
     
     // Get the CDN URL
     const url = getDataUrl('data/lakes/hyderabad_lakes_1999.geojson')
@@ -37,9 +47,9 @@ export default function TestCDN() {
     <div style={{ padding: '2rem', fontFamily: 'monospace' }}>
       <h1>CDN Configuration Test</h1>
       
-      <div style={{ marginTop: '1rem' }}>
-        <h2>Environment:</h2>
-        <p>{isProduction ? '🌐 PRODUCTION' : '💻 LOCAL DEVELOPMENT'}</p>
+      <div style={{ marginTop: '1rem', background: '#f9f9f9', padding: '1rem', border: '1px solid #ddd' }}>
+        <h2>Debug Information:</h2>
+        <pre>{JSON.stringify(debugInfo, null, 2)}</pre>
       </div>
 
       <div style={{ marginTop: '1rem' }}>
@@ -60,6 +70,7 @@ export default function TestCDN() {
           <li>LOCAL: Should use <code>/data/lakes/...</code></li>
           <li>PRODUCTION: Should use <code>https://cdn.jsdelivr.net/gh/JuniorHat78/...</code></li>
         </ul>
+        <h3>Check Browser Console for detailed logs!</h3>
       </div>
     </div>
   )
