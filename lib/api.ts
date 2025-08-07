@@ -2,8 +2,6 @@
 import { getDataUrl } from './config';
 
 export async function fetchLakeData(yearOrFilename: string | number) {
-  console.log(`[fetchLakeData] Called with: ${yearOrFilename}`);
-  
   // Handle both year numbers and full filenames
   let filename: string;
   if (typeof yearOrFilename === 'string' && yearOrFilename.includes('hyderabad_lakes')) {
@@ -13,31 +11,24 @@ export async function fetchLakeData(yearOrFilename: string | number) {
   }
   
   const url = getDataUrl(`data/lakes/${filename}`);
-  console.log(`[fetchLakeData] Primary URL: ${url}`);
   
   try {
     const response = await fetch(url);
     if (!response.ok) {
       // If it's a year, try the alternative hyderabad_lakes prefix
       if (typeof yearOrFilename === 'number' || !yearOrFilename.includes('hyderabad_lakes')) {
-        console.warn(`Primary path failed for ${yearOrFilename}, trying alternative...`);
         const altFilename = `hyderabad_lakes_${yearOrFilename}.geojson`;
         const altUrl = getDataUrl(`data/lakes/${altFilename}`);
-        console.log(`[fetchLakeData] Alternative URL: ${altUrl}`);
         const altResponse = await fetch(altUrl);
         if (altResponse.ok) {
-          const data = await altResponse.json();
-          console.log(`[fetchLakeData] Success with alt path, features: ${data.features?.length}`);
-          return data;
+          return await altResponse.json();
         }
       }
       throw new Error(`Failed to fetch lake data for ${yearOrFilename}`);
     }
-    const data = await response.json();
-    console.log(`[fetchLakeData] Success with primary path, features: ${data.features?.length}`);
-    return data;
+    return await response.json();
   } catch (error) {
-    console.error(`[fetchLakeData] Error for ${yearOrFilename}:`, error);
+    console.error(`Error fetching lake data for ${yearOrFilename}:`, error);
     throw error;
   }
 }
