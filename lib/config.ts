@@ -28,41 +28,38 @@ export function getDataUrl(path: string): string {
   const isServer = typeof window === 'undefined';
   const hostname = !isServer ? window.location.hostname : 'server-side';
   
-  console.log('[getDataUrl] Environment:', {
+  console.log('[getDataUrl] Called with:', {
     path,
     isServer,
     hostname,
-    NODE_ENV: process.env.NODE_ENV,
+    pathIncludes_data: path.includes('/data/') || path.includes('data/'),
     useCdn: API_CONFIG.useCdn,
   });
   
-  // For server-side rendering or production, ALWAYS use CDN for data files
-  // Only use local files when explicitly on localhost in the browser
-  const shouldUseLocal = !isServer && hostname === 'localhost';
-  
-  console.log('[getDataUrl] shouldUseLocal:', shouldUseLocal);
-  
-  // Use local files only when running on localhost in browser
-  if (shouldUseLocal) {
+  // ONLY use local files when explicitly on localhost
+  if (!isServer && hostname === 'localhost') {
     const cleanPath = path.startsWith('/') ? path.slice(1) : path;
     const localUrl = `/${cleanPath}`;
-    console.log('[getDataUrl] Returning LOCAL path:', localUrl);
+    console.log('[getDataUrl] LOCAL (localhost):', localUrl);
     return localUrl;
   }
   
-  // Use CDN for all data files in production and SSR
-  if (API_CONFIG.useCdn && path.includes('/data/')) {
-    // Extract path after /data/ to maintain directory structure
-    const dataPath = path.split('/data/')[1] || path.split('data/')[1];
-    const cdnBase = `https://cdn.jsdelivr.net/gh/${API_CONFIG.cdnGithubUsername}/${API_CONFIG.cdnGithubRepo}@${API_CONFIG.cdnBranch}`;
-    const cdnUrl = `${cdnBase}/data/${dataPath}`;
-    console.log('[getDataUrl] Returning CDN path:', cdnUrl);
+  // For ANY data file path, use CDN in production
+  if (path.includes('data/lakes/')) {
+    // Extract the filename part after lakes/
+    let filename = '';
+    if (path.includes('data/lakes/')) {
+      filename = path.split('data/lakes/')[1];
+    }
+    
+    const cdnUrl = `https://cdn.jsdelivr.net/gh/${API_CONFIG.cdnGithubUsername}/${API_CONFIG.cdnGithubRepo}@${API_CONFIG.cdnBranch}/data/lakes/${filename}`;
+    console.log('[getDataUrl] CDN URL:', cdnUrl);
     return cdnUrl;
   }
   
   // Fallback for non-data files (images, etc.)
   const cleanPath = path.startsWith('/') ? path.slice(1) : path;
   const fallbackUrl = `/${cleanPath}`;
-  console.log('[getDataUrl] Returning FALLBACK path:', fallbackUrl);
+  console.log('[getDataUrl] FALLBACK (non-data file):', fallbackUrl);
   return fallbackUrl;
 }

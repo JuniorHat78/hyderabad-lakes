@@ -7,8 +7,22 @@ export default function TestCDN() {
   const [cdnUrl, setCdnUrl] = useState('')
   const [dataStatus, setDataStatus] = useState('Checking...')
   const [debugInfo, setDebugInfo] = useState<any>({})
+  const [consoleLog, setConsoleLog] = useState<string[]>([])
+  const [rawResponse, setRawResponse] = useState('')
 
   useEffect(() => {
+    // Capture console logs
+    const logs: string[] = []
+    const originalLog = console.log
+    console.log = (...args) => {
+      const message = args.map(arg => 
+        typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+      ).join(' ')
+      logs.push(message)
+      setConsoleLog(prev => [...prev, message])
+      originalLog(...args)
+    }
+
     // Collect debug info
     const debug = {
       hostname: window.location.hostname,
@@ -21,26 +35,32 @@ export default function TestCDN() {
     }
     setDebugInfo(debug)
     
-    console.log('Test page debug info:', debug)
-    
     // Get the CDN URL
     const url = getDataUrl('data/lakes/hyderabad_lakes_1999.geojson')
     setCdnUrl(url)
     
     // Test fetching the data
     fetch(url)
-      .then(res => {
-        if (res.ok) {
-          return res.json()
+      .then(res => res.text())
+      .then(text => {
+        setRawResponse(text.substring(0, 200) + '...')
+        
+        // Try to parse as JSON
+        try {
+          const data = JSON.parse(text)
+          setDataStatus(`✅ Success! Loaded ${data.features?.length || 0} features`)
+        } catch (err) {
+          setDataStatus(`❌ Error: ${err}`)
         }
-        throw new Error(`HTTP ${res.status}`)
-      })
-      .then(data => {
-        setDataStatus(`✅ Success! Loaded ${data.features?.length || 0} features`)
       })
       .catch(err => {
-        setDataStatus(`❌ Error: ${err.message}`)
+        setDataStatus(`❌ Fetch Error: ${err.message}`)
       })
+
+    // Restore console.log
+    return () => {
+      console.log = originalLog
+    }
   }, [])
 
   return (
@@ -57,6 +77,18 @@ export default function TestCDN() {
         <p style={{ wordBreak: 'break-all', background: '#f0f0f0', padding: '1rem' }}>
           {cdnUrl}
         </p>
+      </div>
+
+      <div style={{ marginTop: '1rem', background: '#fff3cd', padding: '1rem', border: '1px solid #ffc107' }}>
+        <h2>Console Logs from getDataUrl():</h2>
+        <pre style={{ fontSize: '12px', maxHeight: '200px', overflow: 'auto' }}>
+          {consoleLog.length > 0 ? consoleLog.join('\n') : 'No logs captured yet...'}
+        </pre>
+      </div>
+
+      <div style={{ marginTop: '1rem', background: '#f8d7da', padding: '1rem', border: '1px solid #dc3545' }}>
+        <h2>Raw Response (first 200 chars):</h2>
+        <pre style={{ fontSize: '12px' }}>{rawResponse}</pre>
       </div>
 
       <div style={{ marginTop: '1rem' }}>
