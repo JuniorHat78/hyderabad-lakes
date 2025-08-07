@@ -9,6 +9,7 @@ import { lakeDatabase, filterLakes, getLakeStats, type Lake } from "@/lib/data/l
 import { Search, ChevronLeft, ChevronRight, ArrowLeft, Droplets, Filter, MapPin, TrendingDown, Calendar, Activity } from "lucide-react"
 import { LakeMapCanvas } from "@/components/LakeMapCanvas"
 import { LakeOutline } from "@/components/LakeOutline"
+import { fetchLakeData } from "@/lib/api"
 
 const LAKES_PER_PAGE = 18 // 6 rows of 3 cards
 const START_YEAR = 1988
@@ -39,9 +40,8 @@ export default function LakeDataDirectory() {
       
       for (let year = START_YEAR; year <= END_YEAR; year++) {
         try {
-          const response = await fetch(`/data/lakes/lakes_${year}.geojson`)
-          if (response.ok) {
-            const data = await response.json()
+          const data = await fetchLakeData(year)
+          if (data && data.features) {
             const totalArea = data.features.reduce((sum: number, feature: any) => 
               sum + (feature.properties?.area_km2 || 0), 0
             )
@@ -67,8 +67,7 @@ export default function LakeDataDirectory() {
   // Load GeoJSON for selected year
   useEffect(() => {
     if (showTemporalView) {
-      fetch(`/data/lakes/lakes_${selectedYear}.geojson`)
-        .then(res => res.json())
+      fetchLakeData(selectedYear)
         .then(data => setYearlyLakeGeoJSON(data))
         .catch(err => console.error('Error loading year data:', err))
     }
