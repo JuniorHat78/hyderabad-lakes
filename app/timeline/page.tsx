@@ -35,7 +35,7 @@ function EventCard({ category, categoryClass, title, summary, details }: EventCa
 
   return (
     <div
-      className={`bg-[#2a3040]/80 border border-[#3d4354] rounded-xl p-8 cursor-pointer transition-all duration-300 relative overflow-hidden hover:bg-[#2a3040] hover:border-[#e05d38]/50 hover:-translate-y-0.5 hover:shadow-[0_10px_30px_rgba(0,0,0,0.5)] ${isExpanded ? "bg-[#2a3040] border-[#e05d38]" : ""}`}
+      className={`bg-[#2a3040]/80 border border-[#3d4354] rounded-xl p-4 sm:p-6 md:p-8 cursor-pointer transition-all duration-300 relative overflow-hidden hover:bg-[#2a3040] hover:border-[#e05d38]/50 hover:-translate-y-0.5 hover:shadow-[0_10px_30px_rgba(0,0,0,0.5)] ${isExpanded ? "bg-[#2a3040] border-[#e05d38]" : ""}`}
       onClick={() => setIsExpanded(!isExpanded)}
     >
       <div className="flex justify-between items-start mb-4">
@@ -46,8 +46,8 @@ function EventCard({ category, categoryClass, title, summary, details }: EventCa
         </span>
       </div>
 
-      <h3 className="text-2xl font-semibold mb-2 leading-tight">{title}</h3>
-      <p className="text-base opacity-80 leading-relaxed">{summary}</p>
+      <h3 className="text-lg sm:text-xl md:text-2xl font-semibold mb-2 leading-tight">{title}</h3>
+      <p className="text-sm sm:text-base opacity-80 leading-relaxed">{summary}</p>
 
       {isExpanded && (
         <div className="mt-6 pt-6 border-t border-[#3d4354]">
@@ -86,18 +86,18 @@ interface YearSectionProps {
 function YearSection({ year, era, eraLabel, lakes, stats, events }: YearSectionProps) {
   return (
     <section
-      className={`min-h-screen flex items-center relative py-16 px-8 opacity-100 transition-opacity duration-700 ${era}`}
+      className={`min-h-screen flex items-center relative py-12 sm:py-16 px-4 sm:px-6 md:px-8 pr-24 sm:pr-36 md:pr-52 opacity-100 transition-opacity duration-700 ${era}`}
       data-year={year}
       data-lakes={lakes}
     >
-      <div className="max-w-7xl w-full mx-auto grid grid-cols-1 lg:grid-cols-3 gap-16 items-start">
+      <div className="max-w-7xl w-full mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8 sm:gap-12 lg:gap-16 items-start pr-24 sm:pr-36 md:pr-52">
         <div className="lg:sticky lg:top-[20vh]">
           <div className="text-sm uppercase tracking-wider opacity-50 mb-2">{eraLabel}</div>
-          <div className="text-6xl md:text-8xl font-black leading-none mb-6 font-mono">{year}</div>
+          <div className="text-4xl sm:text-6xl md:text-8xl font-black leading-none mb-4 sm:mb-6 font-mono">{year}</div>
           <div className="flex flex-col gap-6">
             {stats.map((stat, index) => (
               <div key={index} className="border-l-3 border-current pl-4">
-                <div className="text-2xl md:text-3xl font-bold mb-1">{stat.value}</div>
+                <div className="text-xl sm:text-2xl md:text-3xl font-bold mb-1">{stat.value}</div>
                 <div className="text-sm opacity-70 uppercase tracking-wider">{stat.label}</div>
                 <div className="text-sm opacity-60 mt-1">{stat.change}</div>
               </div>
@@ -180,21 +180,21 @@ export default function HyderabadLakesStory() {
       </Link>
 
       {/* Fixed Stats Display */}
-      <div className="fixed top-20 left-5 bg-[#2a3040]/95 p-6 rounded-xl backdrop-blur-md z-40 border border-[#3d4354]">
+      <div className="fixed top-20 left-5 bg-[#2a3040]/95 p-3 sm:p-4 md:p-6 rounded-xl backdrop-blur-md z-40 border border-[#3d4354]">
         <div className="mb-4">
           <div className="text-xs opacity-60 uppercase tracking-wider mb-1">Lakes Lost</div>
-          <div className="text-3xl font-bold font-mono">{lakesLost.toLocaleString()}</div>
+          <div className="text-xl sm:text-2xl md:text-3xl font-bold font-mono">{lakesLost.toLocaleString()}</div>
         </div>
         <div>
           <div className="text-xs opacity-60 uppercase tracking-wider mb-1">Year</div>
-          <div className="text-3xl font-bold font-mono">{currentYear}</div>
+          <div className="text-xl sm:text-2xl md:text-3xl font-bold font-mono">{currentYear}</div>
         </div>
       </div>
 
       {/* Water Level Visualization */}
-      <div className="fixed right-0 top-0 bottom-0 w-32 md:w-48 bg-gradient-to-b from-[#2a3656]/30 to-[#1c2433] z-30 overflow-hidden border-l border-[#3d4354]">
-        <div className="absolute top-5 left-5 right-5 text-center z-40">
-          <div className="text-2xl md:text-4xl font-black font-mono mb-2">{Math.round(waterPercent)}%</div>
+      <div className="fixed right-0 top-0 bottom-0 w-20 sm:w-32 md:w-48 bg-gradient-to-b from-[#2a3656]/30 to-[#1c2433] z-30 overflow-hidden border-l border-[#3d4354]">
+        <div className="absolute top-2 sm:top-5 left-2 sm:left-5 right-2 sm:right-5 text-center z-40">
+          <div className="text-lg sm:text-2xl md:text-4xl font-black font-mono mb-1 sm:mb-2">{Math.round(waterPercent)}%</div>
           <div className="text-xs uppercase tracking-wider opacity-70">Water Capacity</div>
         </div>
         <div
@@ -206,24 +206,24 @@ export default function HyderabadLakesStory() {
       </div>
 
       {/* Hero Section */}
-      <section className="h-screen flex flex-col justify-center items-center text-center bg-gradient-to-br from-[#2a3656]/40 to-[#1c2433] relative px-8">
-        <h1 className="text-4xl md:text-8xl font-black mb-4 leading-none tracking-tight">
+      <section className="min-h-screen flex flex-col justify-center items-center text-center bg-gradient-to-br from-[#2a3656]/40 to-[#1c2433] relative px-4 sm:px-6 md:px-8 py-12 pr-24 sm:pr-36 md:pr-52">
+        <h1 className="text-2xl sm:text-4xl md:text-6xl lg:text-8xl font-black mb-4 leading-none tracking-tight">
           50+ Years of Vanishing Water
         </h1>
-        <p className="text-xl md:text-2xl opacity-60 mb-8 font-light max-w-4xl">
+        <p className="text-base sm:text-xl md:text-2xl opacity-60 mb-6 sm:mb-8 font-light max-w-4xl">
           A data-driven chronicle of Hyderabad's environmental catastrophe
         </p>
-        <div className="flex flex-col md:flex-row gap-8 md:gap-16 mt-12 opacity-0 animate-[fadeInUp_1s_ease_0.5s_forwards]">
+        <div className="flex flex-col sm:flex-row gap-6 sm:gap-8 md:gap-16 mt-8 sm:mt-12 opacity-0 animate-[fadeInUp_1s_ease_0.5s_forwards]">
           <div className="text-center">
-            <div className="text-3xl md:text-5xl font-black text-green-500 font-mono">3,000-7,000</div>
+            <div className="text-2xl sm:text-3xl md:text-5xl font-black text-green-500 font-mono">3,000-7,000</div>
             <div className="text-sm opacity-70 uppercase tracking-wider">Historical Water Bodies</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl md:text-5xl font-black text-red-500 font-mono">61%</div>
+            <div className="text-2xl sm:text-3xl md:text-5xl font-black text-red-500 font-mono">61%</div>
             <div className="text-sm opacity-70 uppercase tracking-wider">Area Lost (1979-2024)</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl md:text-5xl font-black text-orange-500 font-mono">70-500</div>
+            <div className="text-2xl sm:text-3xl md:text-5xl font-black text-orange-500 font-mono">70-500</div>
             <div className="text-sm opacity-70 uppercase tracking-wider">Remain Today</div>
           </div>
         </div>
@@ -236,7 +236,7 @@ export default function HyderabadLakesStory() {
       </section>
 
       {/* Timeline Container */}
-      <div id="timeline" className="relative w-full bg-[#1c2433]">
+      <div id="timeline" className="relative w-full bg-[#1c2433] pr-20 sm:pr-32 md:pr-48">
         <YearSection
           year={1967}
           era="era-stable text-green-500"
