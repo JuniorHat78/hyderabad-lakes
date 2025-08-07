@@ -14,8 +14,8 @@ export const API_CONFIG = {
       : 'https://hyderabad-lakes.vercel.app'  // Update this with your actual site URL
   ),
   
-  // For Vercel deployment with API
-  useStaticData: false,
+  // For Vercel deployment with static data
+  useStaticData: true,
 };
 
 // Helper function to get data URL
@@ -23,16 +23,6 @@ export function getDataUrl(path: string): string {
   // Remove leading slash if present
   const cleanPath = path.startsWith('/') ? path.slice(1) : path;
   
-  // If running locally in development, use the local public folder
-  if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
-    return `/${cleanPath}`;
-  }
-  
-  // If using static data (GitHub Pages), use relative path
-  if (API_CONFIG.useStaticData) {
-    return `/${cleanPath}`;
-  }
-  
-  // Otherwise use API endpoint
-  return `${API_CONFIG.baseUrl}/${cleanPath}`;
+  // Always use relative path for static files in public folder
+  return `/${cleanPath}`;
 }
