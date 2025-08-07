@@ -24,16 +24,15 @@ export const API_CONFIG = {
 
 // Helper function to get data URL with CDN support
 export function getDataUrl(path: string): string {
-  const isDevelopment = process.env.NODE_ENV === 'development';
   const isLocalhost = typeof window !== 'undefined' && window.location.hostname === 'localhost';
   
-  // Use local files in development mode
-  if (isDevelopment && isLocalhost) {
+  // Use local files only in localhost development
+  if (isLocalhost) {
     const cleanPath = path.startsWith('/') ? path.slice(1) : path;
     return `/${cleanPath}`;
   }
   
-  // Use CDN for all data files in production
+  // Use CDN for all data files in production (non-localhost)
   if (API_CONFIG.useCdn && path.includes('/data/')) {
     // Extract path after /data/ to maintain directory structure
     const dataPath = path.split('/data/')[1] || path.split('data/')[1];
