@@ -86,11 +86,11 @@ interface YearSectionProps {
 function YearSection({ year, era, eraLabel, lakes, stats, events }: YearSectionProps) {
   return (
     <section
-      className={`min-h-screen flex items-center relative py-12 sm:py-16 px-4 sm:px-6 md:px-8 pr-24 sm:pr-36 md:pr-52 opacity-100 transition-opacity duration-700 ${era}`}
+      className={`min-h-screen flex items-center relative py-12 sm:py-16 px-4 sm:px-6 md:px-8 pr-24 sm:pr-36 md:pr-52 lg:pr-8 opacity-100 transition-opacity duration-700 ${era}`}
       data-year={year}
       data-lakes={lakes}
     >
-      <div className="max-w-7xl w-full mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8 sm:gap-12 lg:gap-16 items-start pr-24 sm:pr-36 md:pr-52">
+      <div className="max-w-7xl w-full mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8 sm:gap-12 lg:gap-16 items-start">
         <div className="lg:sticky lg:top-[20vh]">
           <div className="text-sm uppercase tracking-wider opacity-50 mb-2">{eraLabel}</div>
           <div className="text-4xl sm:text-6xl md:text-8xl font-black leading-none mb-4 sm:mb-6 font-mono">{year}</div>
